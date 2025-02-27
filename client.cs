@@ -25,6 +25,7 @@ namespace lösenordshanterare
                 string json = JsonSerializer.Serialize(this);
                 string path = @"C:\Users\olive\source\repos\lösenordshanterare\lösenordshanterare\files\client.json";
                 File.WriteAllText(path, json);
+                Console.WriteLine();
             }
         }
     }
