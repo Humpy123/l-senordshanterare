@@ -3,22 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace lösenordshanterare
 {
     internal class server
     {
-        static void random()
-        {
-            using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
-            {
-                byte[] randomBytes = new byte[16]; // You can choose the length you need
-                rng.GetBytes(randomBytes); // Fill the byte array with random bytes
+        public string PasswordVault { get; set; }
+        public string IV { get; set; }
 
-                // Example: Convert to a random integer (use the first 4 bytes)
-                int randomInt = BitConverter.ToInt32(randomBytes, 0);
-                Console.WriteLine("Random Integer: " + randomInt);
+        public void GenerateIV()
+        {
+            using (Aes aesAlg = Aes.Create())
+            {
+                string ivBase64 = Convert.ToBase64String(aesAlg.IV);
+                IV = ivBase64;
+                string json = JsonSerializer.Serialize(this);
+                string path = @"C:\Users\olive\source\repos\lösenordshanterare\lösenordshanterare\files\server.json";
+                File.WriteAllText(path, json);
+                Console.WriteLine();
             }
         }
     }

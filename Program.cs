@@ -8,7 +8,10 @@ namespace lösenordshanterare
         {
 
             client Client = new client();
+            server Server = new server();
+            Server.GenerateIV();
             Client.generateSecret();
+            
         }
     }
 }
