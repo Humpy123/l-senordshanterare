@@ -13,3 +13,5 @@ C:\Users\olive\source\repos\lösenordshanterare\lösenordshanterare\obj\Debug\ne
 C:\Users\olive\source\repos\lösenordshanterare\lösenordshanterare\obj\Debug\net8.0\lösenordshanterare.pdb
 C:\Users\olive\source\repos\lösenordshanterare\lösenordshanterare\obj\Debug\net8.0\lösenordshanterare.genruntimeconfig.cache
 C:\Users\olive\source\repos\lösenordshanterare\lösenordshanterare\obj\Debug\net8.0\ref\lösenordshanterare.dll
+C:\Users\olive\source\repos\lösenordshanterare\lösenordshanterare\bin\Debug\net8.0\files\client.json
+C:\Users\olive\source\repos\lösenordshanterare\lösenordshanterare\bin\Debug\net8.0\server.cs

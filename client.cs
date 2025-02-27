@@ -23,7 +23,7 @@ namespace lösenordshanterare
 
                 SecretKey = Convert.ToBase64String(randomBytes);
                 string json = JsonSerializer.Serialize(this);
-                string path = @"C:\Users\olive\source\repos\lösenordshanterare\lösenordshanterare\files\client.json";
+                string path = @"files\client.json";
                 File.WriteAllText(path, json);
                 Console.WriteLine();
             }
