@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("lösenordshanterare")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+52cf74075ced11d5b2d435a95a893a11f5daf6cd")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6c47787ad86aa70651492ccf22b0d7db4e8209ca")]
 [assembly: System.Reflection.AssemblyProductAttribute("lösenordshanterare")]
 [assembly: System.Reflection.AssemblyTitleAttribute("lösenordshanterare")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
