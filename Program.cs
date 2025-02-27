@@ -1,10 +1,14 @@
-﻿namespace lösenordshanterare
+﻿using System.Security.Cryptography;
+
+namespace lösenordshanterare
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+
+            client Client = new client();
+            Client.generateSecret();
         }
     }
 }
