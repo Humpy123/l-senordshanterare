@@ -10,11 +10,49 @@ namespace lösenordshanterare
     internal class Program
     
     {
-        static string GetPassword()
+     /*   static string GetPassword()
         {
-            Console.WriteLine("Enter password: ");
+            Console.WriteLine("Enter a master password: ");
             string password = Console.ReadLine();
             return password;
+        }*/
+
+        static void PrintMenu()
+        {
+            Console.WriteLine("Commands:\n");
+
+            Console.WriteLine("init - create a new vault\n");
+
+            Console.WriteLine("create - Create a new client file (e.g., on another device) to an already existing vault.");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("syntax: create < client > < server > { < pwd >} { < secret >\n");
+            Console.ResetColor();
+
+            Console.WriteLine("get - Show stored values for some property or list properties in vault.");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("syntax: get < client > < server > [ < prop >] { < pwd >}\n");
+            Console.ResetColor();
+
+            Console.WriteLine("set - Store value for some ( possibly new ) property in vault.");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("syntax: set < client > < server > < prop > [ - g ] { < pwd >} { < value >}\n");
+            Console.ResetColor();
+
+            Console.WriteLine("delete - Drop some property from vault.");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("syntax: delete < client > < server > < prop > { < pwd >}\n");
+            Console.ResetColor();
+
+            Console.WriteLine("secret - Show secret key.");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("syntax: secret < client >\n");
+            Console.ResetColor();
+
+
+            Console.WriteLine("change - Change the master password");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("syntax: change < client > < server > { < pwd >} { < new_pwd >}");
+            Console.ResetColor();
         }
 
         static void Main(string[] args)
@@ -27,7 +65,6 @@ namespace lösenordshanterare
 
             Server.GenerateIV();
             Client.generateSecret();
-            string masterPassword = GetPassword();
 
             string path = @"files/client.json";
             string json = File.ReadAllText(path);
@@ -35,12 +72,17 @@ namespace lösenordshanterare
             string secretKey = c.SecretKey;
             byte[] secretKeyBytes = Encoding.ASCII.GetBytes(secretKey);
 
-            Rfc2898DeriveBytes vaultKey = new Rfc2898DeriveBytes(masterPassword, secretKeyBytes);
+            Console.WriteLine("Enter a master password: ");
+            Rfc2898DeriveBytes vaultKey = new Rfc2898DeriveBytes(Console.ReadLine(), secretKeyBytes, 1000);
 
             path = @"files/server.json";
             json = File.ReadAllText(path);
             server s = JsonSerializer.Deserialize<server>(json);
             byte[] IV = Convert.FromBase64String(s.IV);
+
+            Console.Clear();
+            Console.WriteLine("Succesfully logged in\n\n");
+            PrintMenu();      
 
             using (Aes aesAlg = Aes.Create())
             {
