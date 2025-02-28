@@ -7,7 +7,7 @@ namespace lösenordshanterare
 {
     public static class CryptoHelper
     {
-        public static byte[] Encrypt(string plainText, byte[] key, byte[] iv)
+        public static byte[] Encrypt(Dictionary<string, string> vault, byte[] key, byte[] iv)
         {
             using (Aes aesAlg = Aes.Create())
             {
@@ -22,7 +22,7 @@ namespace lösenordshanterare
                     {
                         using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
                         {
-                            swEncrypt.Write(plainText);
+                            swEncrypt.Write(vault);
                         }
                     }
 
@@ -31,7 +31,7 @@ namespace lösenordshanterare
             }
         }
 
-        public static string Decrypt(byte[] cipherText, byte[] key, byte[] iv)
+        public static string DecryptS(byte[] cipherText, byte[] key, byte[] iv)
         {
             using (Aes aesAlg = Aes.Create())
             {
