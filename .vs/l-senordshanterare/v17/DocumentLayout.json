@@ -7,6 +7,9 @@
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\henry\\AppData\\Local\\Temp\\.vsdbgsrc\\ddbc274c0cf1270a987ec09bb857cf87ddc3af13a36c6614c22128c9ddaa55e2\\Program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\henry\\source\\repos\\l-senordshanterare\\files\\client.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:files\\client.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
@@ -15,16 +18,16 @@
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:files\\server.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\henry\\source\\repos\\l-senordshanterare\\client.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:client.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\henry\\source\\repos\\l-senordshanterare\\server.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:server.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\henry\\source\\repos\\l-senordshanterare\\CryptoHelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:CryptoHelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\henry\\source\\repos\\l-senordshanterare\\client.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:client.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\henry\\source\\repos\\l-senordshanterare\\l\u00F6senordshanterare.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
@@ -42,35 +45,50 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 5,
           "Children": [
             {
               "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\henry\\AppData\\Local\\Temp\\.vsdbgsrc\\ddbc274c0cf1270a987ec09bb857cf87ddc3af13a36c6614c22128c9ddaa55e2\\Program.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\AppData\\Local\\Temp\\.vsdbgsrc\\ddbc274c0cf1270a987ec09bb857cf87ddc3af13a36c6614c22128c9ddaa55e2\\Program.cs",
+              "ToolTip": "C:\\Users\\henry\\AppData\\Local\\Temp\\.vsdbgsrc\\ddbc274c0cf1270a987ec09bb857cf87ddc3af13a36c6614c22128c9ddaa55e2\\Program.cs [Read Only]",
+              "RelativeToolTip": "..\\..\\..\\AppData\\Local\\Temp\\.vsdbgsrc\\ddbc274c0cf1270a987ec09bb857cf87ddc3af13a36c6614c22128c9ddaa55e2\\Program.cs [Read Only]",
+              "ViewState": "AQIAAAkAAAAAAAAAAAAswB8AAAApAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-17T13:32:29.963Z",
+              "EditorCaption": " [Read Only]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "client.json",
               "DocumentMoniker": "C:\\Users\\henry\\source\\repos\\l-senordshanterare\\files\\client.json",
               "RelativeDocumentMoniker": "files\\client.json",
               "ToolTip": "C:\\Users\\henry\\source\\repos\\l-senordshanterare\\files\\client.json",
               "RelativeToolTip": "files\\client.json",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAOAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAA8AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-03-06T09:19:56.58Z"
+              "WhenOpened": "2025-03-06T09:19:56.58Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "server.json",
               "DocumentMoniker": "C:\\Users\\henry\\source\\repos\\l-senordshanterare\\files\\server.json",
               "RelativeDocumentMoniker": "files\\server.json",
               "ToolTip": "C:\\Users\\henry\\source\\repos\\l-senordshanterare\\files\\server.json",
               "RelativeToolTip": "files\\server.json",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAABRAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAABgAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-03-06T09:19:12.551Z"
+              "WhenOpened": "2025-03-06T09:19:12.551Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "l\u00F6senordshanterare.csproj",
               "DocumentMoniker": "C:\\Users\\henry\\source\\repos\\l-senordshanterare\\l\u00F6senordshanterare.csproj",
               "RelativeDocumentMoniker": "l\u00F6senordshanterare.csproj",
@@ -82,7 +100,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 6,
               "Title": "CryptoHelper.cs",
               "DocumentMoniker": "C:\\Users\\henry\\source\\repos\\l-senordshanterare\\CryptoHelper.cs",
               "RelativeDocumentMoniker": "CryptoHelper.cs",
@@ -90,7 +108,8 @@
               "RelativeToolTip": "CryptoHelper.cs",
               "ViewState": "AQIAACsAAAAAAAAAAAAAwDsAAABdAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-02-28T11:16:13.571Z"
+              "WhenOpened": "2025-02-28T11:16:13.571Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -100,14 +119,14 @@
               "RelativeDocumentMoniker": "Program.cs",
               "ToolTip": "C:\\Users\\henry\\source\\repos\\l-senordshanterare\\Program.cs",
               "RelativeToolTip": "Program.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAGEAAAAAAAAA",
+              "ViewState": "AQIAAGQAAAAAAAAAAAAswHIAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-02-27T12:03:51.498Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 5,
               "Title": "server.cs",
               "DocumentMoniker": "C:\\Users\\henry\\source\\repos\\l-senordshanterare\\server.cs",
               "RelativeDocumentMoniker": "server.cs",
@@ -115,23 +134,25 @@
               "RelativeToolTip": "server.cs",
               "ViewState": "AQIAAAoAAAAAAAAAAAAAwB0AAAAeAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-02-27T12:03:49.2Z"
+              "WhenOpened": "2025-02-27T12:03:49.2Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 4,
               "Title": "client.cs",
               "DocumentMoniker": "C:\\Users\\henry\\source\\repos\\l-senordshanterare\\client.cs",
               "RelativeDocumentMoniker": "client.cs",
               "ToolTip": "C:\\Users\\henry\\source\\repos\\l-senordshanterare\\client.cs",
               "RelativeToolTip": "client.cs",
-              "ViewState": "AQIAAA4AAAAAAAAAAAAAwC8AAAAAAAAA",
+              "ViewState": "AQIAAAgAAAAAAAAAAAAAwBAAAABOAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-02-27T11:02:55.728Z"
+              "WhenOpened": "2025-02-27T11:02:55.728Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "server.json",
               "DocumentMoniker": "C:\\Users\\henry\\source\\repos\\l-senordshanterare\\server.json",
               "RelativeDocumentMoniker": "server.json",
