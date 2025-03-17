@@ -50,27 +50,52 @@ namespace lösenordshanterare
 
         static void Main(string[] args)
         {
+
+            //files/client.json files/server.json
             if (args[0] == "init")
             {
                 string clientPath = args[1];
                 string serverPath = args[2];
 
-                server serv = new server(clientPath);
-                client cl = new client(serverPath);
+                server serv = new server(serverPath);
+                client cl = new client(clientPath);
 
                 Console.Write("Write your password: ");
 
-  
-                byte[] secretKeyBytes = Encoding.ASCII.GetBytes(cl.SecretKey);
-                Rfc2898DeriveBytes vK = new Rfc2898DeriveBytes(Console.ReadLine(), secretKeyBytes, 1000); ;
 
-                CryptoHelper.Encrypt(serv.PasswordVault, vK.GetBytes(16), Convert.FromBase64String(serv.IV));
+                Rfc2898DeriveBytes vK = CryptoHelper.GenerateVaultKey(cl.SecretKey, Console.ReadLine());
+
+                Dictionary<string, string> dict = new Dictionary<string, string>();
+
+                string p = JsonSerializer.Serialize(dict);
+                serv.PasswordVault = CryptoHelper.Encrypt(p, vK.GetBytes(16), Convert.FromBase64String(serv.IV));
+                serv.WriteToJson();
             }
 
             if (args[0] == "create")
             {
                 string clientPath = args[1];
                 string serverPath = args[2];
+
+                Console.WriteLine("Enter secretkey: ");
+                string secretKey = Console.ReadLine();
+
+                string json = File.ReadAllText(serverPath);
+                server serv = JsonSerializer.Deserialize<server>(json);
+
+                json = File.ReadAllText(clientPath);
+                client cl = JsonSerializer.Deserialize<client>(json);
+
+
+
+                Console.WriteLine("Enter Password: ");
+                Rfc2898DeriveBytes vK = CryptoHelper.GenerateVaultKey(secretKey, Console.ReadLine());
+
+                string p = CryptoHelper.Decrypt(serv.PasswordVault, vK.GetBytes(16), Convert.FromBase64String(serv.IV));
+                Console.Write(p);
+
+
+
             }
 
 

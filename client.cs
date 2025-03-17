@@ -41,5 +41,7 @@ namespace lösenordshanterare
                 Console.WriteLine();
             }
         }
+
+        public client() { }
     }
 }

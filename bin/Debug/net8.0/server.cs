@@ -10,8 +10,16 @@ namespace lösenordshanterare
 {
     internal class server
     {
-        public Dictionary<string, string> PasswordVault { get; set; }
+        public byte[] PasswordVault { get; set; }
         public string IV { get; set; }
+
+
+        public void WriteToJson()
+        {
+            string json = JsonSerializer.Serialize(this);
+            string path = "files/server.json";
+            File.WriteAllText(path, json);
+        }
 
         public server(string serverPath)
         {
@@ -19,11 +27,11 @@ namespace lösenordshanterare
             {
                 string ivBase64 = Convert.ToBase64String(aesAlg.IV);
                 IV = ivBase64;
-                string json = JsonSerializer.Serialize(this);
-                string path = @serverPath;
-                File.WriteAllText(path, json);
-                Console.WriteLine();
+                WriteToJson();
             }
         }
+
+        public server() { }
+
     }
 }

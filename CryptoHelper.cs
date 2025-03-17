@@ -7,7 +7,7 @@ namespace lösenordshanterare
 {
     public static class CryptoHelper
     {
-        public static byte[] Encrypt(Dictionary<string, string> vault, byte[] key, byte[] iv)
+        public static byte[] Encrypt(string vault, byte[] key, byte[] iv)
         {
             using (Aes aesAlg = Aes.Create())
             {
@@ -31,12 +31,14 @@ namespace lösenordshanterare
             }
         }
 
-        public static string DecryptS(byte[] cipherText, byte[] key, byte[] iv)
+        public static string Decrypt(byte[] cipherText, byte[] key, byte[] iv)
         {
             using (Aes aesAlg = Aes.Create())
             {
                 aesAlg.Key = key;
                 aesAlg.IV = iv;
+                aesAlg.Mode = CipherMode.CBC;
+                aesAlg.Padding = PaddingMode.PKCS7;
 
                 ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
 
@@ -52,5 +54,12 @@ namespace lösenordshanterare
                 }
             }
         }
+
+        public static Rfc2898DeriveBytes GenerateVaultKey(string secretKey, string pwd)
+        {
+            byte[] salt = Convert.FromBase64String(secretKey);  // Ensure correct salt format
+            return new Rfc2898DeriveBytes(pwd, salt, 1000);
+        }
+
     }
 }
