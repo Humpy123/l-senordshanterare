@@ -10,7 +10,7 @@ namespace lösenordshanterare
 {
     internal class server
     {
-        public byte[] PasswordVault { get; set; }
+        public string PasswordVault { get; set; }
         public string IV { get; set; }
 
 

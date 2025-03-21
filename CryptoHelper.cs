@@ -13,6 +13,7 @@ namespace lösenordshanterare
             {
                 aesAlg.Key = key;
                 aesAlg.IV = iv;
+                aesAlg.Padding = PaddingMode.PKCS7;
 
                 ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
 
@@ -55,10 +56,11 @@ namespace lösenordshanterare
             }
         }
 
-        public static Rfc2898DeriveBytes GenerateVaultKey(string secretKey, string pwd)
+        public static byte[] DeriveKey(string secretKey, string pwd)
         {
             byte[] salt = Convert.FromBase64String(secretKey);  // Ensure correct salt format
-            return new Rfc2898DeriveBytes(pwd, salt, 1000);
+            Rfc2898DeriveBytes vK = new Rfc2898DeriveBytes(pwd, salt, 1000);
+            return vK.GetBytes(16);
         }
 
     }
