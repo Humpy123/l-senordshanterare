@@ -252,6 +252,60 @@ namespace lösenordshanterare
                 }
             }
 
+            if (args[0] == "delete")
+            {
+                string clientPath = args[1];
+                string serverPath = args[2];
+                string property = args[3];
+
+
+
+                server serv = JsonSerializer.Deserialize<server>(File.ReadAllText(serverPath));
+                client cl = JsonSerializer.Deserialize<client>(File.ReadAllText(clientPath));
+
+                Console.WriteLine("Enter Password: ");
+
+                byte[] secretKey = Convert.FromBase64String(cl.SecretKey.Replace("\\u002b", "+"));
+                byte[] vaultKey = CryptoHelper.DeriveKey(cl.SecretKey, Console.ReadLine());
+                byte[] iv = Convert.FromBase64String(serv.IV);
+                byte[] encryptedVault = Convert.FromBase64String(serv.PasswordVault);
+
+                Console.WriteLine(Convert.ToBase64String(secretKey));
+                Console.WriteLine(Convert.ToBase64String(vaultKey));
+
+                string decryptedVault;
+
+                /*try
+                {
+                    decryptedVault = CryptoHelper.Decrypt(encryptedVault, vaultKey, iv);
+                }
+                catch (CryptographicException)
+                {
+                    Console.WriteLine("Crypto error");
+                }*/
+                decryptedVault = CryptoHelper.Decrypt(encryptedVault, vaultKey, iv);
+
+
+                Dictionary<string, string> vaultData = JsonSerializer.Deserialize<Dictionary<string, string>>(decryptedVault);
+                vaultData.Remove(property);
+
+                string updatedVaultJson = JsonSerializer.Serialize(vaultData);
+                byte[] updatedEncryptedVault = CryptoHelper.Encrypt(updatedVaultJson, vaultKey, iv);
+                serv.PasswordVault = Convert.ToBase64String(updatedEncryptedVault);
+
+                Console.WriteLine($"Line 164 IV: '{serv.IV}'");
+                Console.WriteLine($"IV Length: {serv.IV.Length}");
+                Console.WriteLine($"IV Base64 Valid: {IsBase64String(serv.IV)}");
+                byte[] ivBytes = Convert.FromBase64String(serv.IV);
+                Console.WriteLine($"Decoded IV length: {ivBytes.Length}");
+
+                foreach (var kvp in vaultData)
+                {
+                    Console.WriteLine($"Key: {kvp.Key}, Value: {kvp.Value}");
+                }
+
+                File.WriteAllText(serverPath, JsonSerializer.Serialize(serv));
+            }
 
             foreach (string arg  in args)
                 Console.WriteLine(arg);
