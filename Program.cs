@@ -11,49 +11,6 @@ namespace lösenordshanterare
     internal class Program
     
     {
-        //static void PrintMenu()
-        //{
-        //    Console.WriteLine("Commands:\n");
-
-        //    Console.WriteLine("init - create a new vault\n");
-
-        //    Console.WriteLine("create - Create a new client file (e.g., on another device) to an already existing vault.");
-        //    Console.ForegroundColor = ConsoleColor.Yellow;
-        //    Console.WriteLine("syntax: create < client > < server > { < pwd >} { < secret >\n");
-        //    Console.ResetColor();
-
-        //    Console.WriteLine("get - Show stored values for some property or list properties in vault.");
-        //    Console.ForegroundColor = ConsoleColor.Yellow;
-        //    Console.WriteLine("syntax: get < client > < server > [ < prop >] { < pwd >}\n");
-        //    Console.ResetColor();
-
-        //    Console.WriteLine("set - Store value for some ( possibly new ) property in vault.");
-        //    Console.ForegroundColor = ConsoleColor.Yellow;
-        //    Console.WriteLine("syntax: set < client > < server > < prop > [ - g ] { < pwd >} { < value >}\n");
-        //    Console.ResetColor();
-
-        //    Console.WriteLine("delete - Drop some property from vault.");
-        //    Console.ForegroundColor = ConsoleColor.Yellow;
-        //    Console.WriteLine("syntax: delete < client > < server > < prop > { < pwd >}\n");
-        //    Console.ResetColor();
-
-        //    Console.WriteLine("secret - Show secret key.");
-        //    Console.ForegroundColor = ConsoleColor.Yellow;
-        //    Console.WriteLine("syntax: secret < client >\n");
-        //    Console.ResetColor();
-
-
-        //    Console.WriteLine("change - Change the master password");
-        //    Console.ForegroundColor = ConsoleColor.Yellow;
-        //    Console.WriteLine("syntax: change < client > < server > { < pwd >} { < new_pwd >}");
-        //    Console.ResetColor();
-        //}
-        static bool IsBase64String(string s)
-        {
-            Span<byte> buffer = new Span<byte>(new byte[s.Length]);
-            return Convert.TryFromBase64String(s, buffer, out _);
-        }
-
         static void Main(string[] args)
         {
 
@@ -62,6 +19,12 @@ namespace lösenordshanterare
             {
                 string clientPath = args[1];
                 string serverPath = args[2];
+
+                if (!File.Exists(clientPath))
+                {
+                    var newClient = new client(clientPath);
+                    File.WriteAllText(clientPath, JsonSerializer.Serialize(newClient));
+                }
 
                 server serv = JsonSerializer.Deserialize<server>(File.ReadAllText(serverPath));
                 client cl = JsonSerializer.Deserialize<client>(File.ReadAllText(clientPath));
@@ -82,6 +45,7 @@ namespace lösenordshanterare
                 byte[] updatedVault = CryptoHelper.Encrypt(updatedVaultJson, vaultKey, iv);
                 serv.PasswordVault = Convert.ToBase64String(updatedVault);
 
+                File.WriteAllText(clientPath, cl.SecretKey);
                 File.WriteAllText(serverPath, JsonSerializer.Serialize(serv));
             }
 
@@ -90,6 +54,11 @@ namespace lösenordshanterare
                 string clientPath = args[1];
                 string serverPath = args[2];
 
+                if (!File.Exists(clientPath))
+                {
+                    var newClient = new client(clientPath);
+                    File.WriteAllText(clientPath, JsonSerializer.Serialize(newClient));
+                }
 
                 server serv = JsonSerializer.Deserialize<server>(File.ReadAllText(serverPath));
                 client cl = JsonSerializer.Deserialize<client>(File.ReadAllText(clientPath));
@@ -112,8 +81,6 @@ namespace lösenordshanterare
                 {
                     Console.WriteLine($"Key: {kvp.Key}, Value: {kvp.Value}");
                 }
-
-
             }
             
             if (args[0]== "set")
@@ -228,40 +195,6 @@ namespace lösenordshanterare
                 }
             }
 
-            if (args[0]== "geft")
-            {
-                string clientPath = args[1];
-                string serverPath = args[2];
-                string property = args[3];
-
-                if (!File.Exists(clientPath) || !File.Exists(serverPath))
-                {
-                    Console.WriteLine("Error, client or server file missing");
-                }
-
-                server serv = JsonSerializer.Deserialize<server>(File.ReadAllText(serverPath));
-                client cl = JsonSerializer.Deserialize<client>(File.ReadAllText(clientPath));
-
-                Console.WriteLine("Enter Password: ");
-
-                byte[] secretKey = Convert.FromBase64String(cl.SecretKey.Replace("\\u002b", "+"));
-                byte[] vaultKey = CryptoHelper.DeriveKey(cl.SecretKey, Console.ReadLine());
-                byte[] iv = Convert.FromBase64String(serv.IV);
-                byte[] encryptedVault = Convert.FromBase64String(serv.PasswordVault);
-
-                Console.WriteLine(Convert.ToBase64String(secretKey));
-                Console.WriteLine(Convert.ToBase64String(vaultKey));
-
-                string decryptedVault;
-                decryptedVault = CryptoHelper.Decrypt(encryptedVault, secretKey, iv);
-                var vaultData = JsonSerializer.Deserialize<Dictionary<string, string>>(decryptedVault);
-
-                foreach (var kvp in vaultData)
-                {
-                    Console.WriteLine($"Key: {kvp.Key}, Value: {kvp.Value}");
-                }
-            }
-
             if (args[0] == "delete")
             {
                 string clientPath = args[1];
@@ -303,16 +236,38 @@ namespace lösenordshanterare
                 byte[] updatedEncryptedVault = CryptoHelper.Encrypt(updatedVaultJson, vaultKey, iv);
                 serv.PasswordVault = Convert.ToBase64String(updatedEncryptedVault);
 
-                Console.WriteLine($"Line 164 IV: '{serv.IV}'");
-                Console.WriteLine($"IV Length: {serv.IV.Length}");
-                Console.WriteLine($"IV Base64 Valid: {IsBase64String(serv.IV)}");
-                byte[] ivBytes = Convert.FromBase64String(serv.IV);
-                Console.WriteLine($"Decoded IV length: {ivBytes.Length}");
+                File.WriteAllText(serverPath, JsonSerializer.Serialize(serv));
+            }
 
-                foreach (var kvp in vaultData)
-                {
-                    Console.WriteLine($"Key: {kvp.Key}, Value: {kvp.Value}");
-                }
+            if (args[0] == "secret")
+            {
+                string clientPath = args[1];
+                client cl = JsonSerializer.Deserialize<client>(File.ReadAllText(clientPath));
+                Console.WriteLine(cl.SecretKey);
+            }
+
+            if (args[0] == "change")
+            {
+                string clientPath = args[1];
+                string serverPath = args[2];
+
+                server serv = JsonSerializer.Deserialize<server>(File.ReadAllText(serverPath));
+                client cl = JsonSerializer.Deserialize<client>(File.ReadAllText(clientPath));
+
+                Console.WriteLine("Enter Password: ");
+
+                byte[] secretKey = Convert.FromBase64String(cl.SecretKey.Replace("\\u002b", "+"));
+                byte[] vaultKey = CryptoHelper.DeriveKey(cl.SecretKey, Console.ReadLine());
+                byte[] iv = Convert.FromBase64String(serv.IV);
+                byte[] encryptedVault = Convert.FromBase64String(serv.PasswordVault);
+
+                string decryptedVault;
+                decryptedVault = CryptoHelper.Decrypt(encryptedVault, vaultKey, iv);
+  
+                Console.WriteLine("Enter new master password: ");
+                byte[] newVaultKey = CryptoHelper.DeriveKey(cl.SecretKey, Console.ReadLine());
+                byte[] newPasswordVault = CryptoHelper.Encrypt(decryptedVault, newVaultKey, iv);
+                serv.PasswordVault = Convert.ToBase64String(newPasswordVault);
 
                 File.WriteAllText(serverPath, JsonSerializer.Serialize(serv));
             }

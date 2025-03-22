@@ -13,7 +13,6 @@ C:\Users\olive\source\repos\lösenordshanterare\lösenordshanterare\obj\Debug\ne
 C:\Users\olive\source\repos\lösenordshanterare\lösenordshanterare\obj\Debug\net8.0\lösenordshanterare.pdb
 C:\Users\olive\source\repos\lösenordshanterare\lösenordshanterare\obj\Debug\net8.0\lösenordshanterare.genruntimeconfig.cache
 C:\Users\olive\source\repos\lösenordshanterare\lösenordshanterare\obj\Debug\net8.0\ref\lösenordshanterare.dll
-C:\Users\olive\source\repos\lösenordshanterare\lösenordshanterare\bin\Debug\net8.0\files\client.json
 C:\Users\olive\source\repos\lösenordshanterare\lösenordshanterare\bin\Debug\net8.0\server.cs
 C:\Users\henry\Source\Repos\l-senordshanterare\bin\Debug\net8.0\lösenordshanterare.exe
 C:\Users\henry\Source\Repos\l-senordshanterare\bin\Debug\net8.0\server.cs
@@ -32,3 +31,4 @@ C:\Users\henry\Source\Repos\l-senordshanterare\obj\Debug\net8.0\refint\lösenord
 C:\Users\henry\Source\Repos\l-senordshanterare\obj\Debug\net8.0\lösenordshanterare.pdb
 C:\Users\henry\Source\Repos\l-senordshanterare\obj\Debug\net8.0\lösenordshanterare.genruntimeconfig.cache
 C:\Users\henry\Source\Repos\l-senordshanterare\obj\Debug\net8.0\ref\lösenordshanterare.dll
+C:\Users\olive\source\repos\lösenordshanterare\lösenordshanterare\bin\Debug\net8.0\files\client.json

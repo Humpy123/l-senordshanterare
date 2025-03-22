@@ -12,7 +12,7 @@ namespace lösenordshanterare
     {
         public string SecretKey { get; set; }
 
-        public void generateSecret()
+        public void generateSecret(string path)
         {
             using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
             {
@@ -21,23 +21,18 @@ namespace lösenordshanterare
 
                 SecretKey = Convert.ToBase64String(randomBytes);
                 string json = JsonSerializer.Serialize(this);
-                string path = @"files\client.json";
                 File.WriteAllText(path, json);
                 Console.WriteLine();
             }
         }
 
-        public client(string newPath)
+        public client(string path)
         {
             using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
             {
                 byte[] randomBytes = new byte[32]; // You can choose the length you need
                 rng.GetBytes(randomBytes); // Fill the byte array with random bytes
-
                 SecretKey = Convert.ToBase64String(randomBytes);
-                string json = JsonSerializer.Serialize(this);
-                string path = @newPath;
-                File.WriteAllText(path, json);
                 Console.WriteLine();
             }
         }
