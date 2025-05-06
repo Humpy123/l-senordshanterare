@@ -1,8 +1,21 @@
 {
   "version": 2,
-  "dgSpecHash": "CBTMAcmkiudCXMnUeK9654qg3Lf9qF3hkntwdjzlFlYcmS60rDAMuEyzeqHPOjchseMPGoX0fCOoZMAEUafn0g==",
+  "dgSpecHash": "SvVh1IrS6pTukWAhTuxGLvJWdxiVlpsGAY7NQFqOaC5FdrTs0Pgr/X2y/B1CkA4nGCILFC1IYB26eU5dl1RTrw==",
   "success": true,
   "projectFilePath": "C:\\Users\\olive\\source\\repos\\lösenordshanterare\\lösenordshanterare\\lösenordshanterare.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\olive\\.nuget\\packages\\microsoft.applicationinsights\\2.22.0\\microsoft.applicationinsights.2.22.0.nupkg.sha512",
+    "C:\\Users\\olive\\.nuget\\packages\\microsoft.testing.extensions.telemetry\\1.6.3\\microsoft.testing.extensions.telemetry.1.6.3.nupkg.sha512",
+    "C:\\Users\\olive\\.nuget\\packages\\microsoft.testing.extensions.trxreport.abstractions\\1.6.3\\microsoft.testing.extensions.trxreport.abstractions.1.6.3.nupkg.sha512",
+    "C:\\Users\\olive\\.nuget\\packages\\microsoft.testing.extensions.vstestbridge\\1.6.3\\microsoft.testing.extensions.vstestbridge.1.6.3.nupkg.sha512",
+    "C:\\Users\\olive\\.nuget\\packages\\microsoft.testing.platform\\1.6.3\\microsoft.testing.platform.1.6.3.nupkg.sha512",
+    "C:\\Users\\olive\\.nuget\\packages\\microsoft.testing.platform.msbuild\\1.6.3\\microsoft.testing.platform.msbuild.1.6.3.nupkg.sha512",
+    "C:\\Users\\olive\\.nuget\\packages\\microsoft.testplatform.objectmodel\\17.13.0\\microsoft.testplatform.objectmodel.17.13.0.nupkg.sha512",
+    "C:\\Users\\olive\\.nuget\\packages\\mstest.analyzers\\3.8.3\\mstest.analyzers.3.8.3.nupkg.sha512",
+    "C:\\Users\\olive\\.nuget\\packages\\mstest.testadapter\\3.8.3\\mstest.testadapter.3.8.3.nupkg.sha512",
+    "C:\\Users\\olive\\.nuget\\packages\\mstest.testframework\\3.8.3\\mstest.testframework.3.8.3.nupkg.sha512",
+    "C:\\Users\\olive\\.nuget\\packages\\system.diagnostics.diagnosticsource\\5.0.0\\system.diagnostics.diagnosticsource.5.0.0.nupkg.sha512",
+    "C:\\Users\\olive\\.nuget\\packages\\system.reflection.metadata\\1.6.0\\system.reflection.metadata.1.6.0.nupkg.sha512"
+  ],
   "logs": []
 }

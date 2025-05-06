@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Runtime.InteropServices;
 using System.Net;
 using Microsoft.Win32.SafeHandles;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace lösenordshanterare
 {
@@ -21,30 +22,30 @@ namespace lösenordshanterare
                                                            .Select(s => s[random.Next(s.Length)])
                                                            .ToArray());
         }
-        static void EncryptVault(string vaultData, string clientPath, string serverPath)
+        static void EncryptVault(string vaultData, string clientPath, string serverPath, string pwd)
         {
             server serv = JsonSerializer.Deserialize<server>(File.ReadAllText(serverPath));
             client cl = JsonSerializer.Deserialize<client>(File.ReadAllText(clientPath));
 
-            Console.WriteLine("Enter Password: ");
+          //  Console.WriteLine("Enter Password: ");
 
             byte[] secretKey = Convert.FromBase64String(cl.SecretKey.Replace("\\u002b", "+"));
-            byte[] vaultKey = CryptoHelper.DeriveKey(cl.SecretKey, Console.ReadLine());
+            byte[] vaultKey = CryptoHelper.DeriveKey(cl.SecretKey, pwd);
             byte[] iv = Convert.FromBase64String(serv.IV);
 
             serv.PasswordVault = Convert.ToBase64String(CryptoHelper.Encrypt(vaultData, vaultKey, iv));
 
             File.WriteAllText(serverPath, JsonSerializer.Serialize(serv));
         }
-        static Dictionary<string, string> DecryptVault(string clientPath, string serverPath)
+        static Dictionary<string, string> DecryptVault(string clientPath, string serverPath, string pwd)
         {
             server serv = JsonSerializer.Deserialize<server>(File.ReadAllText(serverPath));
             client cl = JsonSerializer.Deserialize<client>(File.ReadAllText(clientPath));
 
-            Console.WriteLine("Enter Password: ");
+            //Console.WriteLine("Enter Password: ");
 
             byte[] secretKey = Convert.FromBase64String(cl.SecretKey.Replace("\\u002b", "+"));
-            byte[] vaultKey = CryptoHelper.DeriveKey(cl.SecretKey, Console.ReadLine());
+            byte[] vaultKey = CryptoHelper.DeriveKey(cl.SecretKey, pwd);
             byte[] iv = Convert.FromBase64String(serv.IV);
             byte[] encryptedVault = Convert.FromBase64String(serv.PasswordVault);
 
@@ -54,7 +55,22 @@ namespace lösenordshanterare
 
             return vaultData;
         }
-        static void Init(string clientPath, string serverPath)
+
+        static Dictionary<string, string> DecryptVault(string clientPath, string serverPath, string pwd, string secret)
+        {
+            server serv = JsonSerializer.Deserialize<server>(File.ReadAllText(serverPath));
+
+            byte[] vaultKey = CryptoHelper.DeriveKey(secret, pwd);
+            byte[] iv = Convert.FromBase64String(serv.IV);
+            byte[] encryptedVault = Convert.FromBase64String(serv.PasswordVault);
+
+            string decryptedVault;
+            decryptedVault = CryptoHelper.Decrypt(encryptedVault, vaultKey, iv);
+            Dictionary<string, string> vaultData = JsonSerializer.Deserialize<Dictionary<string, string>>(decryptedVault);
+
+            return vaultData;
+        }
+        static void Init(string clientPath, string serverPath, string pwd)
         {
             if (!File.Exists(clientPath))
             {
@@ -71,10 +87,10 @@ namespace lösenordshanterare
             server serv = JsonSerializer.Deserialize<server>(File.ReadAllText(serverPath));
             client cl = JsonSerializer.Deserialize<client>(File.ReadAllText(clientPath));
 
-            Console.Write("Write your password: ");
+            //Console.Write("Write your password: ");
 
             byte[] secretKey = Convert.FromBase64String(cl.SecretKey.Replace("\\u002b", "+"));
-            byte[] vaultKey = CryptoHelper.DeriveKey(cl.SecretKey, Console.ReadLine());
+            byte[] vaultKey = CryptoHelper.DeriveKey(cl.SecretKey, pwd);
             byte[] iv = Convert.FromBase64String(serv.IV);
 
             Dictionary<string, string> vaultData = new Dictionary<string, string>();
@@ -84,9 +100,10 @@ namespace lösenordshanterare
 
             File.WriteAllText(clientPath, JsonSerializer.Serialize(cl));
             File.WriteAllText(serverPath, JsonSerializer.Serialize(serv));
+            Console.WriteLine(cl.SecretKey);
         }
 
-        static void Create(string clientPath, string serverPath)
+        static void Create(string clientPath, string serverPath, string pwd, string secret)
         {
             if (!File.Exists(clientPath))
             {
@@ -100,49 +117,52 @@ namespace lösenordshanterare
                 File.WriteAllText(clientPath, JsonSerializer.Serialize(newClient));
             }
 
-            var vaultData = DecryptVault(clientPath, serverPath);
+            var vaultData = DecryptVault(clientPath, serverPath, pwd, secret);
         }
 
-        static void Set(string clientPath, string serverPath, string property, string password)
+        static void Set(string clientPath, string serverPath, string password, string property, string pwd)
         {
-            Dictionary<string, string> vaultData = DecryptVault(clientPath, serverPath);
-            vaultData.Add(property, password);
+            Dictionary<string, string> vaultData = DecryptVault(clientPath, serverPath, pwd);
 
-            EncryptVault(JsonSerializer.Serialize(vaultData), clientPath, serverPath);
+            if (vaultData.ContainsKey(property))
+                vaultData[property] = password;
+            else
+                vaultData.Add(property, password);
+  
+            EncryptVault(JsonSerializer.Serialize(vaultData), clientPath, serverPath, pwd);
         }
 
-        static void Get(string clientPath, string serverPath)
+        static void Get(string clientPath, string serverPath, string pwd)
         {
-            var vaultData = DecryptVault(clientPath, serverPath);
+            var vaultData = DecryptVault(clientPath, serverPath, pwd);
 
-            Console.WriteLine("List of properties:");
+            //Console.WriteLine("List of properties:");
             foreach (var kvp in vaultData)
                 Console.WriteLine(kvp.Key);
         }
 
-        static void Get(string clientPath, string serverPath, string property)
+        static void Get(string clientPath, string serverPath, string pwd, string property)
         {
-            var vaultData = DecryptVault(clientPath, serverPath);
+            var vaultData = DecryptVault(clientPath, serverPath, pwd);
 
             foreach (var kvp in vaultData)
             {
                 if (kvp.Key == property)
-                    Console.WriteLine("Password for " + kvp.Key + ": ");
                     Console.Write(kvp.Value);
             }
         }
 
-        static void Delete(string clientPath, string serverPath, string property)
+        static void Delete(string clientPath, string serverPath, string pwd, string property)
         {
-            var vaultData = DecryptVault(clientPath, serverPath);
+            var vaultData = DecryptVault(clientPath, serverPath, pwd);
             vaultData.Remove(property);
-            EncryptVault(JsonSerializer.Serialize(vaultData), clientPath, serverPath);
+            EncryptVault(JsonSerializer.Serialize(vaultData), clientPath, serverPath, pwd);
         }
 
-        static void Change(string clientPath, string serverPath)
+        static void Change(string clientPath, string serverPath, string pwd)
         {
 
-            string decryptedVault = JsonSerializer.Serialize(DecryptVault(clientPath, serverPath));
+            string decryptedVault = JsonSerializer.Serialize(DecryptVault(clientPath, serverPath, pwd));
 
             server serv = JsonSerializer.Deserialize<server>(File.ReadAllText(serverPath));
             client cl = JsonSerializer.Deserialize<client>(File.ReadAllText(clientPath));
@@ -155,7 +175,7 @@ namespace lösenordshanterare
 
             File.WriteAllText(serverPath, JsonSerializer.Serialize(serv));
         }
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             string clientPath = args[1];
             string serverPath = args[2];    
@@ -163,45 +183,54 @@ namespace lösenordshanterare
             switch (args[0])
             {
                 case "init":
-                    Init(args[1], args[2]);
+                    Console.WriteLine("Enter master password: ");
+                    Init(args[1], args[2], Console.ReadLine());
                     break;
                 case "create":
-                    Create(args[1], args[2]);
+                    Console.WriteLine("Enter master password, then enter your secret key: ");
+                    Create(args[1], args[2], Console.ReadLine(), Console.ReadLine());
                     break;
                 case "set":
                     string property = args[3];
                     if (args.Length == 5)
                     {
-                        if (args[4] == "-g" && args[4] == "-generate")
-                            Set(clientPath, serverPath, property, GenerateRandomPassword());
-                        Console.WriteLine("Error: unrecognized flag");
+                        if (args[4] == "-g" || args[4] == "-generate")
+                        {
+                            Console.WriteLine("Enter master password: ");
+                            Set(clientPath, serverPath, GenerateRandomPassword(), property, Console.ReadLine());
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Enter your desired password for the property, then enter your master password: ");
+                        Set(clientPath, serverPath, Console.ReadLine(), property, Console.ReadLine());
                     }
 
-                    Console.WriteLine("Please enter your desired password for the new property: ");
-                    Set(clientPath, serverPath, property, Console.ReadLine());
-
                     break;
-                case "get":                 
+                case "get":
+                    Console.WriteLine("Enter master password: ");
                     if (args.Length == 3)
-                        Get(clientPath, serverPath);
+                        Get(clientPath, serverPath, Console.ReadLine());
 
                     else if (args.Length == 4)
                     {
                         property = args[3];
-                        Get(clientPath, serverPath, property);
+                        Get(clientPath, serverPath, Console.ReadLine(), property);
                     }
                     break;
                 case "secret":
                     clientPath = args[1];
                     client cl = JsonSerializer.Deserialize<client>(File.ReadAllText(clientPath));
-                    Console.WriteLine("Secret Key: " + cl.SecretKey);
+                    Console.WriteLine(cl.SecretKey);
                     break;
                 case "delete":
                     property = args[3];
-                    Delete(clientPath, serverPath, property);
+                    Console.WriteLine("Enter master password: ");
+                    Delete(clientPath, serverPath, Console.ReadLine(), property);
                     break;
                 case "change":
-                    Change(clientPath, serverPath);
+                    Console.WriteLine("Enter master password: ");
+                    Change(clientPath, serverPath, Console.ReadLine());
                     break;
 
             }
@@ -211,3 +240,4 @@ namespace lösenordshanterare
         }
     }
 }
+
