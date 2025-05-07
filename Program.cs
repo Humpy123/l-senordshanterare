@@ -9,9 +9,9 @@ using System.Net;
 using Microsoft.Win32.SafeHandles;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace lösenordshanterare
+namespace losenordshanterare
 {
-    internal class Program
+    public class Program
     
     {
         static string GenerateRandomPassword()
@@ -177,62 +177,85 @@ namespace lösenordshanterare
         }
         public static void Main(string[] args)
         {
-            string clientPath = args[1];
-            string serverPath = args[2];    
-
-            switch (args[0])
+            if (args.Length < 1)
             {
-                case "init":
-                    Console.WriteLine("Enter master password: ");
-                    Init(args[1], args[2], Console.ReadLine());
-                    break;
-                case "create":
-                    Console.WriteLine("Enter master password, then enter your secret key: ");
-                    Create(args[1], args[2], Console.ReadLine(), Console.ReadLine());
-                    break;
-                case "set":
-                    string property = args[3];
-                    if (args.Length == 5)
-                    {
-                        if (args[4] == "-g" || args[4] == "-generate")
+                Console.WriteLine("Invalid command. Usage: [command] [arguments...]");
+                return;
+            }
+
+            try
+            {
+                string clientPath = args[1];
+
+
+                switch (args[0])
+                {
+                    case "init":
+                        string serverPath = args[2];
+
+                        Console.WriteLine("Enter master password: ");
+                        Init(args[1], args[2], Console.ReadLine());
+                        break;
+                    case "create":
+                        serverPath = args[2];
+
+                        Console.WriteLine("Enter master password, then enter your secret key: ");
+                        Create(args[1], args[2], Console.ReadLine(), Console.ReadLine());
+                        break;
+                    case "set":
+                        serverPath = args[2];
+
+                        string property = args[3];
+                        if (args.Length == 5)
                         {
-                            Console.WriteLine("Enter master password: ");
-                            Set(clientPath, serverPath, GenerateRandomPassword(), property, Console.ReadLine());
+                            if (args[4] == "-g" || args[4] == "-generate")
+                            {
+                                Console.WriteLine("Enter master password: ");
+                                Set(clientPath, serverPath, GenerateRandomPassword(), property, Console.ReadLine());
+                            }
                         }
-                    }
-                    else
-                    {
-                        Console.WriteLine("Enter your desired password for the property, then enter your master password: ");
-                        Set(clientPath, serverPath, Console.ReadLine(), property, Console.ReadLine());
-                    }
+                        else
+                        {
+                            Console.WriteLine("Enter your desired password for the property, then enter your master password: ");
+                            Set(clientPath, serverPath, Console.ReadLine(), property, Console.ReadLine());
+                        }
 
-                    break;
-                case "get":
-                    Console.WriteLine("Enter master password: ");
-                    if (args.Length == 3)
-                        Get(clientPath, serverPath, Console.ReadLine());
+                        break;
+                    case "get":
+                        serverPath = args[2];
 
-                    else if (args.Length == 4)
-                    {
+                        Console.WriteLine("Enter master password: ");
+                        if (args.Length == 3)
+                            Get(clientPath, serverPath, Console.ReadLine());
+
+                        else if (args.Length == 4)
+                        {
+                            property = args[3];
+                            Get(clientPath, serverPath, Console.ReadLine(), property);
+                        }
+                        break;
+                    case "secret":
+                        client cl = JsonSerializer.Deserialize<client>(File.ReadAllText(clientPath));
+                        Console.WriteLine(cl.SecretKey);
+                        break;
+                    case "delete":
+                        serverPath = args[2];
+
                         property = args[3];
-                        Get(clientPath, serverPath, Console.ReadLine(), property);
-                    }
-                    break;
-                case "secret":
-                    clientPath = args[1];
-                    client cl = JsonSerializer.Deserialize<client>(File.ReadAllText(clientPath));
-                    Console.WriteLine(cl.SecretKey);
-                    break;
-                case "delete":
-                    property = args[3];
-                    Console.WriteLine("Enter master password: ");
-                    Delete(clientPath, serverPath, Console.ReadLine(), property);
-                    break;
-                case "change":
-                    Console.WriteLine("Enter master password: ");
-                    Change(clientPath, serverPath, Console.ReadLine());
-                    break;
+                        Console.WriteLine("Enter master password: ");
+                        Delete(clientPath, serverPath, Console.ReadLine(), property);
+                        break;
+                    case "change":
+                        serverPath = args[2];
 
+                        Console.WriteLine("Enter master password: ");
+                        Change(clientPath, serverPath, Console.ReadLine());
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
             }
 
             string projectDirectory = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;

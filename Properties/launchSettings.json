@@ -1,11 +1,11 @@
 {
   "profiles": {
-    "lösenordshanterare": {
+    "losenordshanterare": {
       "commandName": "Project"
     },
     "init": {
       "commandName": "Executable",
-      "executablePath": "C:\\Users\\olive\\source\\repos\\lösenordshanterare\\lösenordshanterare\\bin\\Debug\\net8.0\\lösenordshanterare.exe",
+      "executablePath": "C:\\Users\\olive\\source\\repos\\losenordshanterare\\losenordshanterare\\bin\\Debug\\net8.0\\losenordshanterare.exe",
       "commandLineArgs": "init files/client.json files/server.json"
     },
     "create": {

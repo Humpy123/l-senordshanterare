@@ -3,7 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace lösenordshanterare
+namespace losenordshanterare
 {
     public static class CryptoHelper
     {
