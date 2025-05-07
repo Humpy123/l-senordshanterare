@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("losenordshanterare")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+067e32654821a94ea6c35a89a508ac11085ddff7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+99b6f0d3fcf36a8f15f955b738a8685defb63223")]
 [assembly: System.Reflection.AssemblyProductAttribute("losenordshanterare")]
 [assembly: System.Reflection.AssemblyTitleAttribute("losenordshanterare")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

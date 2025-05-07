@@ -14,10 +14,10 @@ namespace losenordshanterare
         public string IV { get; set; }
 
 
-        public void WriteToJson()
+        public void WriteToJson(string serverPath)
         {
             string json = JsonSerializer.Serialize(this);
-            string path = "files/server.json";
+            string path = serverPath;
             File.WriteAllText(path, json);
         }
 
@@ -27,7 +27,7 @@ namespace losenordshanterare
             {
                 string ivBase64 = Convert.ToBase64String(aesAlg.IV);
                 IV = ivBase64;
-                WriteToJson();
+                WriteToJson(serverPath);
             }
         }
 

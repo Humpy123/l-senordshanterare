@@ -14,13 +14,43 @@ namespace losenordshanterare
     public class Program
     
     {
-        static string GenerateRandomPassword()
+        static string GenerateRandomPassword(int length = 20)
         {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            var random = new RNGCryptoServiceProvider();
+            var result = new StringBuilder(length);
+
+            while (result.Length < length)
+            {
+                byte[] bytes = new byte[1];
+                random.GetBytes(bytes);
+                char c = chars[bytes[0] % chars.Length];
+                if (char.IsLetterOrDigit(c)) // Ensure we only get alphanumeric characters
+                {
+                    result.Append(c);
+                }
+            }
+
+            return result.ToString();
+            /*
+            {
+                const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+                var random = new RNGCryptoServiceProvider();
+                var bytes = new byte[length];
+                random.GetBytes(bytes);
+                var result = new char[length];
+                for (int i = 0; i < length; i++)
+                {
+                    result[i] = chars[bytes[i] % chars.Length];
+                }
+                return new string(result);
+            }
+            
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
             Random random = new Random();
             return new string(Enumerable.Repeat(chars, 20)
                                                            .Select(s => s[random.Next(s.Length)])
-                                                           .ToArray());
+                                                           .ToArray());*/
         }
         static void EncryptVault(string vaultData, string clientPath, string serverPath, string pwd)
         {
@@ -72,17 +102,13 @@ namespace losenordshanterare
         }
         static void Init(string clientPath, string serverPath, string pwd)
         {
-            if (!File.Exists(clientPath))
-            {
+
                 var newClient = new client(clientPath);
                 File.WriteAllText(clientPath, JsonSerializer.Serialize(newClient));
-            }
-
-            if (!File.Exists(serverPath))
-            {
+  
                 var newServer = new server(serverPath);
                 File.WriteAllText(serverPath, JsonSerializer.Serialize(newServer));
-            }
+
 
             server serv = JsonSerializer.Deserialize<server>(File.ReadAllText(serverPath));
             client cl = JsonSerializer.Deserialize<client>(File.ReadAllText(clientPath));
@@ -107,20 +133,33 @@ namespace losenordshanterare
         {
             if (!File.Exists(clientPath))
             {
-                var newClient = new client(clientPath);
+                var newClient = new client(clientPath, secret);
                 File.WriteAllText(clientPath, JsonSerializer.Serialize(newClient));
             }
 
             if (!File.Exists(clientPath))
             {
-                var newClient = new client(clientPath);
+                var newClient = new client(clientPath, secret);
                 File.WriteAllText(clientPath, JsonSerializer.Serialize(newClient));
             }
 
-            var vaultData = DecryptVault(clientPath, serverPath, pwd, secret);
+            try
+            {
+                var vaultData = DecryptVault(clientPath, serverPath, pwd, secret);
+
+                if (vaultData == null)
+                    throw new Exception("Decryption returned null vault data.");
+            }
+            catch
+            {
+                if (File.Exists(clientPath))
+                    File.Delete(clientPath);
+
+                throw new Exception("Failed to decrypt vault: possibly wrong secret key.");
+            }
         }
 
-        static void Set(string clientPath, string serverPath, string password, string property, string pwd)
+        static void Set(string clientPath, string serverPath, string pwd, string property, string password)
         {
             Dictionary<string, string> vaultData = DecryptVault(clientPath, serverPath, pwd);
 
@@ -134,21 +173,37 @@ namespace losenordshanterare
 
         static void Get(string clientPath, string serverPath, string pwd)
         {
-            var vaultData = DecryptVault(clientPath, serverPath, pwd);
+            try
+            {
+                var vaultData = DecryptVault(clientPath, serverPath, pwd);
 
-            //Console.WriteLine("List of properties:");
-            foreach (var kvp in vaultData)
-                Console.WriteLine(kvp.Key);
+                //Console.WriteLine("List of properties:");
+                foreach (var kvp in vaultData)
+                    Console.WriteLine(kvp.Key);
+            }
+
+            catch
+            {
+                Console.WriteLine("error");
+            } 
         }
 
         static void Get(string clientPath, string serverPath, string pwd, string property)
         {
-            var vaultData = DecryptVault(clientPath, serverPath, pwd);
-
-            foreach (var kvp in vaultData)
+            try
             {
-                if (kvp.Key == property)
-                    Console.Write(kvp.Value);
+                var vaultData = DecryptVault(clientPath, serverPath, pwd);
+
+                foreach (var kvp in vaultData)
+                {
+                    if (kvp.Key == property)
+                        Console.WriteLine(kvp.Value);
+                }
+            }
+
+            catch
+            {
+                Console.WriteLine("error");
             }
         }
 
@@ -208,23 +263,27 @@ namespace losenordshanterare
                         string property = args[3];
                         if (args.Length == 5)
                         {
-                            if (args[4] == "-g" || args[4] == "-generate")
+                            if (args[4] == "-g" || args[4] == "--generate")
                             {
-                                Console.WriteLine("Enter master password: ");
-                                Set(clientPath, serverPath, GenerateRandomPassword(), property, Console.ReadLine());
+                                // Console.WriteLine("Enter master password: ");
+                                string randomPassword = GenerateRandomPassword();
+                                Set(clientPath, serverPath, Console.ReadLine(), property, randomPassword);
+                                Console.WriteLine(randomPassword);
                             }
                         }
                         else
                         {
-                            Console.WriteLine("Enter your desired password for the property, then enter your master password: ");
+                          //  Console.WriteLine("Enter your desired password for the property, then enter your master password: ");
+                            
                             Set(clientPath, serverPath, Console.ReadLine(), property, Console.ReadLine());
                         }
+
 
                         break;
                     case "get":
                         serverPath = args[2];
 
-                        Console.WriteLine("Enter master password: ");
+                        //Console.WriteLine("Enter master password: ");
                         if (args.Length == 3)
                             Get(clientPath, serverPath, Console.ReadLine());
 
@@ -257,9 +316,6 @@ namespace losenordshanterare
             {
                 Console.WriteLine($"Error: {ex.Message}");
             }
-
-            string projectDirectory = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
-            Directory.SetCurrentDirectory(projectDirectory);
         }
     }
 }
