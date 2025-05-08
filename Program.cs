@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Net;
 using Microsoft.Win32.SafeHandles;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq.Expressions;
 
 namespace losenordshanterare
 {
@@ -32,32 +33,11 @@ namespace losenordshanterare
             }
 
             return result.ToString();
-            /*
-            {
-                const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-                var random = new RNGCryptoServiceProvider();
-                var bytes = new byte[length];
-                random.GetBytes(bytes);
-                var result = new char[length];
-                for (int i = 0; i < length; i++)
-                {
-                    result[i] = chars[bytes[i] % chars.Length];
-                }
-                return new string(result);
-            }
-            
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            Random random = new Random();
-            return new string(Enumerable.Repeat(chars, 20)
-                                                           .Select(s => s[random.Next(s.Length)])
-                                                           .ToArray());*/
         }
         static void EncryptVault(string vaultData, string clientPath, string serverPath, string pwd)
         {
             server serv = JsonSerializer.Deserialize<server>(File.ReadAllText(serverPath));
             client cl = JsonSerializer.Deserialize<client>(File.ReadAllText(clientPath));
-
-          //  Console.WriteLine("Enter Password: ");
 
             byte[] secretKey = Convert.FromBase64String(cl.SecretKey.Replace("\\u002b", "+"));
             byte[] vaultKey = CryptoHelper.DeriveKey(cl.SecretKey, pwd);
@@ -71,8 +51,6 @@ namespace losenordshanterare
         {
             server serv = JsonSerializer.Deserialize<server>(File.ReadAllText(serverPath));
             client cl = JsonSerializer.Deserialize<client>(File.ReadAllText(clientPath));
-
-            //Console.WriteLine("Enter Password: ");
 
             byte[] secretKey = Convert.FromBase64String(cl.SecretKey.Replace("\\u002b", "+"));
             byte[] vaultKey = CryptoHelper.DeriveKey(cl.SecretKey, pwd);
@@ -95,6 +73,7 @@ namespace losenordshanterare
             byte[] encryptedVault = Convert.FromBase64String(serv.PasswordVault);
 
             string decryptedVault;
+
             decryptedVault = CryptoHelper.Decrypt(encryptedVault, vaultKey, iv);
             Dictionary<string, string> vaultData = JsonSerializer.Deserialize<Dictionary<string, string>>(decryptedVault);
 
@@ -102,18 +81,14 @@ namespace losenordshanterare
         }
         static void Init(string clientPath, string serverPath, string pwd)
         {
-
-                var newClient = new client(clientPath);
-                File.WriteAllText(clientPath, JsonSerializer.Serialize(newClient));
+            var newClient = new client(clientPath);
+            File.WriteAllText(clientPath, JsonSerializer.Serialize(newClient));
   
-                var newServer = new server(serverPath);
-                File.WriteAllText(serverPath, JsonSerializer.Serialize(newServer));
-
+            var newServer = new server(serverPath);
+            File.WriteAllText(serverPath, JsonSerializer.Serialize(newServer));
 
             server serv = JsonSerializer.Deserialize<server>(File.ReadAllText(serverPath));
             client cl = JsonSerializer.Deserialize<client>(File.ReadAllText(clientPath));
-
-            //Console.Write("Write your password: ");
 
             byte[] secretKey = Convert.FromBase64String(cl.SecretKey.Replace("\\u002b", "+"));
             byte[] vaultKey = CryptoHelper.DeriveKey(cl.SecretKey, pwd);
@@ -131,44 +106,47 @@ namespace losenordshanterare
 
         static void Create(string clientPath, string serverPath, string pwd, string secret)
         {
-            if (!File.Exists(clientPath))
+
+            // Cancels the command if a server does not exist at the path.
+            if (!File.Exists(serverPath))
             {
-                var newClient = new client(clientPath, secret);
-                File.WriteAllText(clientPath, JsonSerializer.Serialize(newClient));
+                Console.WriteLine("Error: Invalid server path.");
+                return;
             }
 
-            if (!File.Exists(clientPath))
-            {
-                var newClient = new client(clientPath, secret);
-                File.WriteAllText(clientPath, JsonSerializer.Serialize(newClient));
-            }
-
+            // If decryption is successful, the client is written/overwritten, otherwise an error message is printed.
             try
             {
                 var vaultData = DecryptVault(clientPath, serverPath, pwd, secret);
-
-                if (vaultData == null)
-                    throw new Exception("Decryption returned null vault data.");
+                File.Delete(clientPath);
+                var newClient = new client(clientPath, secret);
+                File.WriteAllText(clientPath, JsonSerializer.Serialize(newClient));
             }
+
             catch
             {
-                if (File.Exists(clientPath))
-                    File.Delete(clientPath);
-
-                throw new Exception("Failed to decrypt vault: possibly wrong secret key.");
-            }
+                Console.WriteLine("Error: Failed to decrypt vault, possibly wrong secret key or password.");
+            }            
         }
 
         static void Set(string clientPath, string serverPath, string pwd, string property, string password)
         {
-            Dictionary<string, string> vaultData = DecryptVault(clientPath, serverPath, pwd);
+            try
+            {
+                Dictionary<string, string> vaultData = DecryptVault(clientPath, serverPath, pwd);
 
-            if (vaultData.ContainsKey(property))
-                vaultData[property] = password;
-            else
-                vaultData.Add(property, password);
-  
-            EncryptVault(JsonSerializer.Serialize(vaultData), clientPath, serverPath, pwd);
+                if (vaultData.ContainsKey(property))
+                    vaultData[property] = password;
+                else
+                    vaultData.Add(property, password);
+
+                EncryptVault(JsonSerializer.Serialize(vaultData), clientPath, serverPath, pwd);
+            }            
+
+            catch
+            {
+                Console.WriteLine("Error: Failed to decrypt vault, possibly wrong secret key or password.");
+            }
         }
 
         static void Get(string clientPath, string serverPath, string pwd)
@@ -176,15 +154,13 @@ namespace losenordshanterare
             try
             {
                 var vaultData = DecryptVault(clientPath, serverPath, pwd);
-
-                //Console.WriteLine("List of properties:");
                 foreach (var kvp in vaultData)
                     Console.WriteLine(kvp.Key);
             }
 
             catch
             {
-                Console.WriteLine("error");
+                Console.WriteLine("Error: Failed to decrypt vault, possibly wrong secret key or password.");
             } 
         }
 
@@ -203,32 +179,50 @@ namespace losenordshanterare
 
             catch
             {
-                Console.WriteLine("error");
+                Console.WriteLine("Error: Failed to decrypt vault, possibly wrong secret key or password.");
             }
         }
 
         static void Delete(string clientPath, string serverPath, string pwd, string property)
         {
-            var vaultData = DecryptVault(clientPath, serverPath, pwd);
-            vaultData.Remove(property);
-            EncryptVault(JsonSerializer.Serialize(vaultData), clientPath, serverPath, pwd);
+            try
+            {
+                var vaultData = DecryptVault(clientPath, serverPath, pwd);
+
+                if (!vaultData.ContainsKey(property))
+                    Console.WriteLine("Error: Property does not exist");
+
+                vaultData.Remove(property);
+                EncryptVault(JsonSerializer.Serialize(vaultData), clientPath, serverPath, pwd);
+            }
+
+            catch
+            {
+                Console.WriteLine("Error: Failed to decrypt vault, possibly wrong secret key or password.");
+            }
         }
 
         static void Change(string clientPath, string serverPath, string pwd)
         {
+            try
+            {
+                string decryptedVault = JsonSerializer.Serialize(DecryptVault(clientPath, serverPath, pwd));
 
-            string decryptedVault = JsonSerializer.Serialize(DecryptVault(clientPath, serverPath, pwd));
+                server serv = JsonSerializer.Deserialize<server>(File.ReadAllText(serverPath));
+                client cl = JsonSerializer.Deserialize<client>(File.ReadAllText(clientPath));
+                byte[] iv = Convert.FromBase64String(serv.IV);
 
-            server serv = JsonSerializer.Deserialize<server>(File.ReadAllText(serverPath));
-            client cl = JsonSerializer.Deserialize<client>(File.ReadAllText(clientPath));
-            byte[] iv = Convert.FromBase64String(serv.IV);
+                Console.WriteLine("Choose your master password: ");
+                byte[] newVaultKey = CryptoHelper.DeriveKey(cl.SecretKey, Console.ReadLine());
+                byte[] newPasswordVault = CryptoHelper.Encrypt(decryptedVault, newVaultKey, iv);
+                serv.PasswordVault = Convert.ToBase64String(newPasswordVault);
 
-            Console.WriteLine("Enter new master password: ");
-            byte[] newVaultKey = CryptoHelper.DeriveKey(cl.SecretKey, Console.ReadLine());
-            byte[] newPasswordVault = CryptoHelper.Encrypt(decryptedVault, newVaultKey, iv);
-            serv.PasswordVault = Convert.ToBase64String(newPasswordVault);
-
-            File.WriteAllText(serverPath, JsonSerializer.Serialize(serv));
+                File.WriteAllText(serverPath, JsonSerializer.Serialize(serv));
+            }        
+            catch
+            {
+                Console.WriteLine("Error: Failed to decrypt vault, possibly wrong secret key or password.");
+            }
         }
         public static void Main(string[] args)
         {
@@ -240,75 +234,146 @@ namespace losenordshanterare
 
             try
             {
-                string clientPath = args[1];
+                string clientPath;
+                string serverPath;
 
 
                 switch (args[0])
                 {
                     case "init":
-                        string serverPath = args[2];
-
-                        Console.WriteLine("Enter master password: ");
-                        Init(args[1], args[2], Console.ReadLine());
-                        break;
-                    case "create":
-                        serverPath = args[2];
-
-                        Console.WriteLine("Enter master password, then enter your secret key: ");
-                        Create(args[1], args[2], Console.ReadLine(), Console.ReadLine());
-                        break;
-                    case "set":
-                        serverPath = args[2];
-
-                        string property = args[3];
-                        if (args.Length == 5)
+                        if (args.Length != 3)
                         {
-                            if (args[4] == "-g" || args[4] == "--generate")
-                            {
-                                // Console.WriteLine("Enter master password: ");
-                                string randomPassword = GenerateRandomPassword();
-                                Set(clientPath, serverPath, Console.ReadLine(), property, randomPassword);
-                                Console.WriteLine(randomPassword);
-                            }
+                            Console.WriteLine("Error: incorrect amount of arguments, see the manual.");
                         }
                         else
                         {
-                          //  Console.WriteLine("Enter your desired password for the property, then enter your master password: ");
-                            
-                            Set(clientPath, serverPath, Console.ReadLine(), property, Console.ReadLine());
+                            serverPath = args[2];
+                            clientPath = args[1];
+
+                            Console.WriteLine("Enter master password: ");
+                            Init(clientPath, serverPath, Console.ReadLine());
                         }
+                        
+                        break;
+                    case "create":
+                        if(args.Length != 3)
+                        {
+                            Console.WriteLine("Error: incorrect amount of arguments, see the manual.");
+                        }
+                        else
+                        {
+                            serverPath = args[2];
+                            clientPath = args[1];
 
+                            Console.WriteLine("Enter master password, then enter your secret key: ");
+                            Create(clientPath, serverPath, Console.ReadLine(), Console.ReadLine());
+                        }
+                        
+                        break;
+                    case "set":
+                        if(args.Length != 4 && args.Length != 5)
+                        {
+                            Console.WriteLine("Error: incorrect amount of arguments, see the manual.");
+                        }
+                        else
+                        {
+                            string property = args[3];
+                            serverPath = args[2];
+                            clientPath = args[1];
 
+                            if (args.Length == 5)
+                            {
+                                if (args[4] == "-g" || args[4] == "--generate")
+                                {
+                                    Console.WriteLine("Enter master password: ");
+                                    string randomPassword = GenerateRandomPassword();
+                                    Set(clientPath, serverPath, Console.ReadLine(), property, randomPassword);
+                                    Console.WriteLine(randomPassword);
+                                }
+
+                                else
+                                    Console.WriteLine("Error: invalid flag, use -g or --generate to generate a random secure password.");
+                            }
+                            else
+                            {
+                                Console.WriteLine("Enter your master password, then your desired password for the property: ");
+                                Set(clientPath, serverPath, Console.ReadLine(), property, Console.ReadLine());
+                            }
+                        }
+                                                   
+                                      
                         break;
                     case "get":
-                        serverPath = args[2];
-
-                        //Console.WriteLine("Enter master password: ");
-                        if (args.Length == 3)
-                            Get(clientPath, serverPath, Console.ReadLine());
-
-                        else if (args.Length == 4)
+                        if (args.Length != 4 && args.Length != 3)
                         {
-                            property = args[3];
-                            Get(clientPath, serverPath, Console.ReadLine(), property);
+                            Console.WriteLine("Error: incorrect amount of arguments, see the manual.");
                         }
+                        else
+                        {
+                            clientPath = args[1];
+                            serverPath = args[2];
+
+                            Console.WriteLine("Enter master password: ");
+                            if (args.Length == 3)
+                                Get(clientPath, serverPath, Console.ReadLine());
+
+                            else if (args.Length == 4)
+                            {
+                                string property = args[3];
+                                Get(clientPath, serverPath, Console.ReadLine(), property);
+                            }
+                        }
+                        
                         break;
                     case "secret":
-                        client cl = JsonSerializer.Deserialize<client>(File.ReadAllText(clientPath));
-                        Console.WriteLine(cl.SecretKey);
+                        if(args.Length != 2)
+                        {
+                            Console.WriteLine("Error: incorrect amount of arguments, see the manual.");
+                        }
+
+                        else
+                        {
+                            clientPath = args[1];
+
+                            client cl = JsonSerializer.Deserialize<client>(File.ReadAllText(clientPath));
+                            Console.WriteLine(cl.SecretKey);
+                        }
+                        
                         break;
                     case "delete":
-                        serverPath = args[2];
+                        if(args.Length != 4)
+                        {
+                            Console.WriteLine("Error: incorrect amount of arguments, see the manual.");
+                        }
 
-                        property = args[3];
-                        Console.WriteLine("Enter master password: ");
-                        Delete(clientPath, serverPath, Console.ReadLine(), property);
+                        else
+                        {
+                            serverPath = args[2];
+                            string property = args[3];
+                            clientPath = args[1];
+
+                            Console.WriteLine("Enter master password: ");
+                            Delete(clientPath, serverPath, Console.ReadLine(), property);
+                        }
+                        
                         break;
                     case "change":
-                        serverPath = args[2];
+                        if(args.Length != 3)
+                        {
+                            Console.WriteLine("Error: incorrect amount of arguments, see the manual.");
+                        }
+                        else
+                        {
+                            serverPath = args[2];
+                            clientPath = args[1];
 
-                        Console.WriteLine("Enter master password: ");
-                        Change(clientPath, serverPath, Console.ReadLine());
+                            Console.WriteLine("Enter master password: ");
+                            Change(clientPath, serverPath, Console.ReadLine());
+                        }
+
+                        break;
+                    default:
+                        Console.WriteLine("Error: command does not exist.");
                         break;
                 }
             }
